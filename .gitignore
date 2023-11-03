@@ -2,3 +2,5 @@
 node_modules
 #Cache
 .DS_Store
+#ENV variables
+.env
