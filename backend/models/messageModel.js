@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-export const messageSchema = new Schema({
+const messageSchema = new Schema({
   fromUserId: {
     type: ObjectId,
     required: true
@@ -22,3 +22,5 @@ export const messageSchema = new Schema({
     default: Date.now
   }
 });
+
+module.exports = {messageSchema};

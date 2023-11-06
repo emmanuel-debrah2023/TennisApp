@@ -1,4 +1,4 @@
-const  {addNewUser,getUsers,getUserById, updateUser, loginUser, registerUser} = require('../controllers/userControllers');
+const  {updateThisUser,getUsers,getUserById, updateUser, loginUser, registerUser} = require('../controllers/userControllers');
 
 //Import express router 
 const router = require('express').Router();
@@ -11,14 +11,6 @@ router.get('/:UserId',getUserById);
 router.post('/login', loginUser);
 router.post('/register', registerUser);
 
-//PATCH PATCH endpoints 
-//router.put('/profile',updateUser)
-
-//DELETE endpoints
-//
-
-
-
-
+router.put('/editProfile', updateThisUser);
 
 module.exports = router;

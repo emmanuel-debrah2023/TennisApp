@@ -1,8 +1,8 @@
 const passport = require('passport');
 const mongoose = require('mongoose');
 const utils = require('../lib/utils');
-const userSchema = require('../models/userSchema');
-const User = mongoose.model("User", userSchema);
+const User = require('../models/userSchema').User;
+
 
 
 const addNewUser = async (req, res) => {
@@ -44,7 +44,10 @@ const updateUser = async (req, res) => {
     await User.findById(req.user._id ,function(err, user) {
       if (!user) {
         req.flash('Error', 'User not logged in');
-        return res.redirect('users/editProfile');
+        console.log('Not logged in')
+        return res.redirect('users/login');
+      } else {
+        console.log(user)
       }
 
       //Trim resposnses
@@ -77,17 +80,42 @@ const updateUser = async (req, res) => {
         user.genderName  = genderName ;
       }
 
+
+
       user.save(function (err, resolve) {
         if(err)
           console.log('db error', err)
            // saved!
          });
+      
     });
 
   } catch(err) {
     res.send(err);
   }
 };
+
+const updateThisUser = async (req,res) => {
+  const update = {};
+  for (const key of Object.keys(req.body)){
+    if (req.body[key] !== '') {
+      update[key] = req.body[key];
+    }
+  }
+  console.log(update);
+
+  try {
+    await User.findOneAndUpdate({_id: req.body._id}, {$set: update}, {new: true}).then((updated) => {
+      console.log('sucess');
+      res.json(updated);
+    });
+    
+  }catch (err) {
+    console.log('err', err);
+    res.send(err); 
+  }
+
+}
 
 const deleteUser = async (req,res) => {
   try{
@@ -155,4 +183,4 @@ const registerUser = function(req, res, next){
 }
 };
 
-module.exports = addNewUser,getUsers,getUserById, updateUser, loginUser, registerUser;
+module.exports = {updateThisUser,getUsers,getUserById, updateUser, loginUser, registerUser};
