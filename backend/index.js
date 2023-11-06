@@ -20,7 +20,7 @@ const port = 4000;
 require('./config/database');
 
 // Must first load the models
-require('./models/userModel');
+require('./models/userSchema');
 
 // Pass the global passport object into the configuration function
 require('./config/passport')(passport);

@@ -1,11 +1,11 @@
-import {userSchema} from '../models/userModel';
-
 const passport = require('passport');
 const mongoose = require('mongoose');
 const utils = require('../lib/utils');
-const User = mongoose.model('User', userSchema)
+const userSchema = require('../models/userSchema');
+const User = mongoose.model("User", userSchema);
 
-export const addNewUser = async (req, res) => {
+
+const addNewUser = async (req, res) => {
   let newUser = new User(req.body);
 
   try {
@@ -16,7 +16,7 @@ export const addNewUser = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
 
   try{
     const allUsers = await User.find({});
@@ -26,7 +26,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
 
   try{
   const thisUser =  await User.findById(req.params.UserId);
@@ -37,18 +37,59 @@ export const getUserById = async (req, res) => {
 };
 
 //Update this so all user fields auto filled unless changed in req
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   let updatedUser = new User(req.body);
 
   try{
-    await User.findOneAndUpdate({_id: req.body._id},{new: true},req.body);
-    res.json(User);
+    await User.findById(req.user._id ,function(err, user) {
+      if (!user) {
+        req.flash('Error', 'User not logged in');
+        return res.redirect('users/editProfile');
+      }
+
+      //Trim resposnses
+      var email = req.body.email.trim();
+      var firstname = req.body.firstname.trim();
+      var lastname = req.body.lastname.trim();
+      var phone = req.body.phone.trim();
+      var genderName = req.body.gender.genderName.trim();
+      var preferedMatch = req.body.gender.preferedMatch.trim();
+
+
+      //Ensure any empty fields do not get passed into DB
+      
+      if (typeof email !== 'undefined') {
+          user.email = email;
+      }
+      if (typeof firstname !== 'undefined') {
+          user.firstname = firstname;
+      }
+      if (typeof lastname !== 'undefined') {
+          user.lastname = lastname;
+      }
+      if (typeof phone !== 'undefined') {
+        user.phone = phone;
+      }
+      if (typeof preferedMatch !== 'undefined') {
+        user.preferedMatch = preferedMatch;
+      }
+      if (typeof genderName !== 'undefined') {
+        user.genderName  = genderName ;
+      }
+
+      user.save(function (err, resolve) {
+        if(err)
+          console.log('db error', err)
+           // saved!
+         });
+    });
+
   } catch(err) {
     res.send(err);
   }
 };
 
-export const deleteUser = async (req,res) => {
+const deleteUser = async (req,res) => {
   try{
     await User.findOneAndDelete({_id: req.data.UserId});
     res.json('User deleted')
@@ -57,7 +98,7 @@ export const deleteUser = async (req,res) => {
   }
 };
 
-export const loginUser = function(req, res, next){
+const loginUser = function(req, res, next){
   User.findOne({ email: req.body.email})
     .then((user) => {
       if (!user) {
@@ -82,7 +123,7 @@ export const loginUser = function(req, res, next){
     });
 };
 
-export const registerUser = function(req, res, next){
+const registerUser = function(req, res, next){
   const saltHash = utils.genPassword(req.body.password);
 
   
@@ -113,3 +154,5 @@ export const registerUser = function(req, res, next){
 
 }
 };
+
+module.exports = addNewUser,getUsers,getUserById, updateUser, loginUser, registerUser;

@@ -1,9 +1,7 @@
-import mongoose from "mongoose";
-const {ObjectId} = require('mongodb');
-
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-export const userSchema = new Schema({
+const userSchema = new Schema({
   firstName: {
     type: String,
     required: true,
@@ -55,13 +53,14 @@ export const userSchema = new Schema({
   },
   reported: {
     userIdReported: {
-      type: ObjectId,
+      type:[]
+
       //required: true
     }
   },
   blocked: {
     userIdBlocked: {
-      type: ObjectId,
+      type:[]
       //required: true 
     }
   },
@@ -72,4 +71,5 @@ export const userSchema = new Schema({
 
 });
 
-mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+module.exports = userSchema;
