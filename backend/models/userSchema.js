@@ -20,11 +20,11 @@ const userSchema = new Schema({
     required: true,
     unique: true 
   },
-  hash:{
+  hash: {
     type: String,
     required: true
   },
-  salt:{
+  salt: {
     type: String,
     required: true
   },
@@ -36,6 +36,10 @@ const userSchema = new Schema({
   isAdmin: {
     type: Boolean,
     default: false
+  },
+  profileImage: {
+    type: String,
+    //required: true
   },
   gender: {
     genderName: {

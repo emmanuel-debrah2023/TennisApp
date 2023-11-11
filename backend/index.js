@@ -3,6 +3,8 @@ const bodyparser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const passport = require('passport');
+const multer = require('multer');
+const upload = multer();
 
 
 /**
@@ -25,18 +27,39 @@ require('./models/userSchema');
 // Pass the global passport object into the configuration function
 require('./config/passport')(passport);
 
+
+
 // This will initialize the passport object on every request
 app.use(passport.initialize());
 
 // Instead of using body-parser middleware, use the new Express implementation of the same thing
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 
 //Allow the front-end to make HTTp requests to express app
 app.use(cors());
 
 //Import all routes from 
 app.use(require('./routes'));
+
+//Configures express to take multipart or form-data
+app.use(upload.array());
+app.use('user/', express.static('storage/images'))
+
+//Multer error file handling 
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(418).json({
+        err_code: err.code,
+        err_message: err.message
+      });
+  } 
+  //else {
+  //  return res.status(500).json({
+  //    err_code: 409,
+  //    err_message: 'Something went wrong'
+//    });}
+  });
 
 //Server will listen on specified PORT
 app.listen(port, () =>

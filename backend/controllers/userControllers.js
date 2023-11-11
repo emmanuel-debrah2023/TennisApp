@@ -2,13 +2,27 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const utils = require('../lib/utils');
 const User = require('../models/userSchema').User;
+const multer = require('multer');
 
 
 
+//comment this func out as its deprecated
 const addNewUser = async (req, res) => {
-  let newUser = new User(req.body);
+//let newUser = new User(req.body);
+  let payload = req.body;
+  // Check if image included
+  console.log(req.body);
+  if (req.body.profileImage) {
+  let imgUrl = `storage/images/${req.body.profileImage}`;
 
+  } else {
+    let imgUrl = '';
+  }
+
+  payload.profileImage = imgUrl;
+  let newUser = new User(req.body);
   try {
+    console.log(req.body);
     await newUser.save();
     res.json(newUser);
   } catch (err) {
@@ -38,6 +52,7 @@ const getUserById = async (req, res) => {
 
 //Update this so all user fields auto filled unless changed in req
 const updateUser = async (req, res) => {
+  
   let updatedUser = new User(req.body);
 
   try{
@@ -96,16 +111,26 @@ const updateUser = async (req, res) => {
 };
 
 const updateThisUser = async (req,res) => {
+  const payload = JSON.parse(JSON.stringify(req.body))
+
   const update = {};
-  for (const key of Object.keys(req.body)){
-    if (req.body[key] !== '') {
-      update[key] = req.body[key];
+  for (const key of Object.keys(payload)){
+    if (payload[key] !== '') {
+      update[key] = payload[key];
     }
   }
+
+  let imgUrl = ''
+  if (req.file) {
+    imgUrl = `./storage/images/${req.file.filename}`;
+    update.profileImage = imgUrl
+    }
+    
+
   console.log(update);
 
   try {
-    await User.findOneAndUpdate({_id: req.body._id}, {$set: update}, {new: true}).then((updated) => {
+    await User.findOneAndUpdate({_id: payload._id}, {$set: update}, {new: true}).then((updated) => {
       console.log('sucess');
       res.json(updated);
     });
@@ -152,19 +177,33 @@ const loginUser = function(req, res, next){
 };
 
 const registerUser = function(req, res, next){
-  const saltHash = utils.genPassword(req.body.password);
+  
+  
+  let imgUrl = ''
+  if (req.file) {
+    imgUrl = `./storage/images/${req.file.filename}`;
+    } else {
+      imgUrl = 'default'
+    }
+
+  const payload = JSON.parse(JSON.stringify(req.body))
+
+  console.log(payload)
+
+  const saltHash = utils.genPassword(payload.password);
 
   
   const salt = saltHash.salt;
   const hash = saltHash.hash;
 
   const newUser = User({
-    firstName: req.body.firstname,
-    lastName: req.body.lastname,
-    email: req.body.email,
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    email: payload.email,
     hash: hash,
     salt: salt,
-    phone: req.body.phone
+    phone: payload.phone,
+    profileImage: imgUrl
   });
   try {
     
