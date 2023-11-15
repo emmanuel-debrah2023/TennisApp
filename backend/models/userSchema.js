@@ -41,6 +41,11 @@ const userSchema = new Schema({
     type: String,
     //required: true
   },
+  matches: {
+    type: Array,
+    default: []
+
+  },
   gender: {
     genderName: {
       type: String,
@@ -58,14 +63,16 @@ const userSchema = new Schema({
   },
   reported: {
     userIdReported: {
-      type:[]
+      type: Array,
+      default: []
 
       //required: true
     }
   },
   blocked: {
     userIdBlocked: {
-      type:[]
+      type: Array,
+      default: []
       //required: true 
     }
   },

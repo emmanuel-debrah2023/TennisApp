@@ -65,3 +65,5 @@ app.use((err, req, res, next) => {
 app.listen(port, () =>
   console.log(`Your tennis server is running on server ${port}`)
 )
+
+module.exports = app;

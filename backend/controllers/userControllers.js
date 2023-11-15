@@ -44,11 +44,77 @@ const getUserById = async (req, res) => {
 
   try{
   const thisUser =  await User.findById(req.params.UserId);
-    res.json(thisUser);
+    res.status(200).json(thisUser);
   } catch(err) {
     res.send(err);
   }
 };
+
+const getUserMatches = async (req, res) => {
+  try{
+    const id = req.params.id ; 
+    const user = await User.findById(id);
+
+    //Find every match associated with id
+    const matches = await Promise.all(
+      user.matches.map((id) => User.findById(id))
+    );
+
+
+    const formattedMatches = matches.map(
+      ({_id, firstName, lastName, profileImage}) => {
+        return {_id, firstName, lastName, profileImage};
+      }
+    ); 
+    res.status(200).json(formattedMatches); 
+    
+  } catch (err) {
+    res.status(404).json({ message: err.message});
+  }
+}
+
+const addRemoveFriend = async (req, res) => {
+  try {
+    //Take both id's from query params
+    const {id, friendId} = req.params;
+
+    //Fetch user objects associated with ids
+    const user = await User.findById(id);
+    const match = await User.findById(friendId);
+
+    //If one user unmatches the other remove from list
+    if (user.matches.includes(friendId)) {
+      user.matches = user.matches.filter((id) => id !== friendId);
+      match.matches = match.matches.filter((id) => id !== id);
+
+    } else {
+      //Add them as each others match
+      user.matches.push(friendId);
+      match.matches.push(id);
+
+    }
+
+    await user.save();
+    await match.save();
+
+    //Find every match associated with id
+    const matches = await Promise.all(
+      user.matches.map((id) => User.findById(id))
+    );
+
+
+    const formattedMatches = matches.map(
+      ({_id, firstName, lastName, profileImage}) => {
+        return {_id, firstName, lastName, profileImage};
+      }
+    ); 
+
+
+    res.status(200).json(formattedMatches);
+  } catch(err){
+    res.status(404).json({message: err.message})
+  }
+}
 
 //Update this so all user fields auto filled unless changed in req
 const updateUser = async (req, res) => {
@@ -132,7 +198,7 @@ const updateThisUser = async (req,res) => {
   try {
     await User.findOneAndUpdate({_id: payload._id}, {$set: update}, {new: true}).then((updated) => {
       console.log('sucess');
-      res.json(updated);
+      res.status(200).json(updated);
     });
     
   }catch (err) {
@@ -140,6 +206,14 @@ const updateThisUser = async (req,res) => {
     res.send(err); 
   }
 
+}
+
+const postCodeTest = async(req,res) => {
+  try{
+
+  } catch(err){
+    
+  }
 }
 
 const deleteUser = async (req,res) => {
