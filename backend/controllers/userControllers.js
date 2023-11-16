@@ -210,9 +210,10 @@ const updateThisUser = async (req,res) => {
 
 const postCodeTest = async(req,res) => {
   try{
+    const {postcode} = req.params;
 
   } catch(err){
-    
+
   }
 }
 
@@ -285,8 +286,9 @@ const registerUser = function(req, res, next){
         .then((user) => {
           const id = user._id;
 
-          const jwt = utils.issueJWT(user)
-            res.json({ success: true, user: user, token: jwt.token, expiresIn: jwt.expires });
+          //Get rid of this and issue upon login 
+          //const jwt = utils.issueJWT(user)
+          //  res.json({ success: true, user: user, token: jwt.token, expiresIn: jwt.expires });
         });
 
 } catch (err) {

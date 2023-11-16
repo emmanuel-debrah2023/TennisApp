@@ -16,7 +16,7 @@ require('dotenv').config();
 
 //Creates an instance of our express app
 const app = express();
-const port = 4000;
+const port = 3001;
 
 // Configures the database and opens a global connection that can be used in any module with `mongoose.connection`
 require('./config/database');

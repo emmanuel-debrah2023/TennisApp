@@ -11,7 +11,7 @@ router.get('/:UserId',getUserById);
 //POST endpoints
 router.post('/login', loginUser);
 router.post('/register',fileUpload("./storage/images"), registerUser);
-router.post('postcode'.postCodeTest)
+//router.post('postcode'.postCodeTest)
 
 router.put('/editProfile', fileUpload("./storage/images"), updateThisUser);
 

@@ -28,15 +28,15 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  phone: {
-    type: Number,
-    required: true,
-    unique: true
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false
-  },
+  //phone: {
+  //  type: Number,
+  //  required: true,
+  //  unique: true
+  //},
+  //isAdmin: {
+  //  type: Boolean,
+  //  default: false
+  //},
   profileImage: {
     type: String,
     //required: true
@@ -55,27 +55,27 @@ const userSchema = new Schema({
       type: String
     }
   },
-  userRating: {
+  userSkillLevel: {
     type: Number, // May change to enum with 5 options ?
     required: false,
     min: 1,
     max: 5,
   },
-  reported: {
-    userIdReported: {
-      type: Array,
-      default: []
+  //reported: {
+    //userIdReported: {
+    //  type: Array,
+    //  default: []
 
       //required: true
-    }
-  },
-  blocked: {
-    userIdBlocked: {
-      type: Array,
-      default: []
+    //}
+  //},
+//  blocked: {
+  //  userIdBlocked: {
+    //  type: Array,
+    //  default: []
       //required: true 
-    }
-  },
+  //  }
+//  },
   createdDate: {
     type: Date,
     default: Date.now
